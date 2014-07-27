@@ -12,9 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Prevent direct access.
 }
 
-if ( ! class_exists( 'WC_Complete' ) ) :
+if ( ! class_exists( 'WC_Autocomplete' ) ) :
 
-class WC_Complete {
+/**
+ * WooCommerce Autocomplete.
+ */
+class WC_Autocomplete {
 
 	/**
 	 * Plugin version.
@@ -84,6 +87,6 @@ class WC_Complete {
 	}
 }
 
-add_action( 'plugins_loaded', array( 'WC_Complete', 'get_instance' ), 0 );
+add_action( 'plugins_loaded', array( 'WC_Autocomplete', 'get_instance' ), 0 );
 
 endif;
