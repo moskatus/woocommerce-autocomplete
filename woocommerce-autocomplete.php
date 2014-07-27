@@ -1,89 +1,89 @@
 <?php
-/*
-Plugin Name: WooCommerce Autocomplete
-Plugin URI: http://www.moskatus.com.br/
-Description: WooCommerce Autocomplete
-Author: Moskatus
-Author URI: http://www.moskatus.com.br
-Version: 1.0.0
-
+/**
+ * Plugin Name: WooCommerce Autocomplete
+ * Plugin URI: http://www.moskatus.com.br/
+ * Description: WooCommerce Autocomplete
+ * Author: Moskatus
+ * Author URI: http://www.moskatus.com.br
+ * Version: 1.0.0
 */
 
-/**
- * Check if WooCommerce is active
- */
-if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-	
-	if ( ! class_exists( 'WC_Complete' ) ) {
-		
-		/**
-		 * Localisation
-		 **/
-		load_plugin_textdomain( 'wc_complete', false, dirname( plugin_basename( __FILE__ ) ) . '/' );
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Prevent direct access.
+}
 
-		class WC_Complete {
-			public function __construct() {
-				// called only after woocommerce has finished loading
-				add_action( 'woocommerce_init', array( &$this, 'woocommerce_loaded' ) );
-				
-				// called after all plugins have loaded
-				add_action( 'plugins_loaded', array( &$this, 'plugins_loaded' ) );
-				
-				
-                                // Load public-facing style sheet and JavaScript.
-                                add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-                                add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
- 
-				// indicates we are running the admin
-				if ( is_admin() ) {
-					// ...
-				}
-				
-				// indicates we are being served over ssl
-				if ( is_ssl() ) {
-					// ...
-				}
-    
-				// take care of anything else that needs to be done immediately upon plugin instantiation, here in the constructor
-			}
-			
-			/**
-			 * Take care of anything that needs woocommerce to be loaded.  
-			 * For instance, if you need access to the $woocommerce global
-			 */
-			public function woocommerce_loaded() {
-				// ...
-			}
-			
-			/**
-			 * Take care of anything that needs all plugins to be loaded
-			 */
-			public function plugins_loaded() {
-				// ...
-			}
-			
-			
-                        public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'assets/css/autocomplete.css', __FILE__ ), array() );
-		wp_enqueue_style( $this->plugin_slug . '-plugin-styles2', plugins_url( 'assets/css/jquery.coolautosuggest.css', __FILE__ ), array() );
+if ( ! class_exists( 'WC_Complete' ) ) :
 
-                }
+class WC_Complete {
 
 	/**
-	 * Register and enqueues public-facing JavaScript files.
+	 * Plugin version.
 	 *
-	 * @since    1.0.0
+	 * @var string
 	 */
-	public function enqueue_scripts() {
-                wp_enqueue_script( $this->plugin_slug . '-plugin-script2', plugins_url( 'assets/js/jquery.coolautosuggest.js', __FILE__ ), array( 'jquery' ) );
-		wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'assets/js/autocomplete.js', __FILE__ ), array( 'jquery' ) );
-                        
-        
-        }       
+	const VERSION = '1.0.0';
 
+	/**
+	 * Instance of this class.
+	 *
+	 * @var object
+	 */
+	protected static $instance = null;
+
+	/**
+	 * Initialize the plugin actions
+	 */
+	private function __construct() {
+		// Load plugin text domain
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+
+		// Check if WooCommerce is activated
+		if ( class_exists( 'WooCommerce' ) ) {
+
+			// Load public-facing style sheet and JavaScript.
+			add_action( 'wp_enqueue_scripts', array( $this, 'scripts' ) );
+		}
+	}
+
+	/**
+	 * Return an instance of this class.
+	 *
+	 * @return object A single instance of this class.
+	 */
+	public static function get_instance() {
+		// If the single instance hasn't been set, set it now.
+		if ( null == self::$instance ) {
+			self::$instance = new self;
 		}
 
-		// finally instantiate our plugin class and add it to the set of globals
-		$GLOBALS['wc_complete'] = new WC_Complete();
+		return self::$instance;
+	}
+
+	/**
+	 * Load the plugin text domain for translation.
+	 *
+	 * @return void
+	 */
+	public function load_plugin_textdomain() {
+		load_plugin_textdomain( 'wc_complete', false, dirname( plugin_basename( __FILE__ ) ) . '/' );
+	}
+
+	/**
+	 * Plugin scripts.
+	 *
+	 * @return void
+	 */
+	public function scripts() {
+		// Styles.
+		wp_enqueue_style( 'wc-complete-plugin-styles', plugins_url( 'assets/css/autocomplete.css', __FILE__ ), array() );
+		wp_enqueue_style( 'wc-complete-plugin-styles2', plugins_url( 'assets/css/jquery.coolautosuggest.css', __FILE__ ), array() );
+
+		// Scripts
+		wp_enqueue_script( 'wc-complete-plugin-script2', plugins_url( 'assets/js/jquery.coolautosuggest.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
+		wp_enqueue_script( 'wc-complete-plugin-script', plugins_url( 'assets/js/autocomplete.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 	}
 }
+
+add_action( 'plugins_loaded', array( 'WC_Complete', 'get_instance' ), 0 );
+
+endif;
