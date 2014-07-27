@@ -68,7 +68,7 @@ class WC_Autocomplete {
 	 * @return void
 	 */
 	public function load_plugin_textdomain() {
-		load_plugin_textdomain( 'wc_complete', false, dirname( plugin_basename( __FILE__ ) ) . '/' );
+		load_plugin_textdomain( 'woocommerce-autocomplete', false, dirname( plugin_basename( __FILE__ ) ) . '/' );
 	}
 
 	/**
@@ -78,12 +78,12 @@ class WC_Autocomplete {
 	 */
 	public function scripts() {
 		// Styles.
-		wp_enqueue_style( 'wc-complete-plugin-styles', plugins_url( 'assets/css/autocomplete.css', __FILE__ ), array() );
-		wp_enqueue_style( 'wc-complete-plugin-styles2', plugins_url( 'assets/css/jquery.coolautosuggest.css', __FILE__ ), array() );
+		wp_enqueue_style( 'wc-autocomplete-plugin-styles', plugins_url( 'assets/css/autocomplete.css', __FILE__ ), array() );
+		wp_enqueue_style( 'wc-autocomplete-plugin-styles2', plugins_url( 'assets/css/jquery.coolautosuggest.css', __FILE__ ), array() );
 
 		// Scripts
-		wp_enqueue_script( 'wc-complete-plugin-script2', plugins_url( 'assets/js/jquery.coolautosuggest.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
-		wp_enqueue_script( 'wc-complete-plugin-script', plugins_url( 'assets/js/autocomplete.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
+		wp_enqueue_script( 'wc-autocomplete-plugin-script2', plugins_url( 'assets/js/jquery.coolautosuggest.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
+		wp_enqueue_script( 'wc-autocomplete-plugin-script', plugins_url( 'assets/js/autocomplete.js', __FILE__ ), array( 'jquery' ), self::VERSION, true );
 	}
 }
 
